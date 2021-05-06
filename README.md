@@ -4,40 +4,29 @@ Lab2 PPK OOP
 # Приклад роботи програми:
 <img src="https://i.ibb.co/5Ly2JH3/image.png" alt="image" border="0">
 
-## Метод "ShowCustomerDetails":
+## Нова команда "report":
 ```java
-private void ShowCustomerDetails() {
-        TWindow custWin = addWindow("Customer Window", 2, 1, 40, 10, TWindow.NOZOOMBOX);
-        custWin.newStatusBar("Enter valid customer number and press Show...");
+else if("report".equals(line)){
+                System.out.println("\nCUSTOMERS REPORT");
+                System.out.println("================");
 
-        custWin.addLabel("Enter customer number: ", 2, 2);
-        TField custNo = custWin.addField(24, 2, 3, false);
-        TText details = custWin.addText("Owner Name: \nAccount Type: \nAccount Balance: ", 2, 4, 38, 8);
+                for(int cust_idx = 0; cust_idx < Bank.getNumberOfCustomers(); ++cust_idx) {
+                    Customer customer = Bank.getCustomer(cust_idx);
+                    System.out.println();
+                    System.out.println("Customer: " + customer.getLastName() + ", " + customer.getFirstName());
 
-        DataSource dataSource = new DataSource("C:\\Users\\boss\\Desktop\\TUIdemo\\src\\com\\mybank\\tui\\test.dat");
-        try {
-            dataSource.loadData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        custWin.addButton("&Show", 28, 2, new TAction() {
-            @Override
-            public void DO() {
-                try {
-                    int custNum = Integer.parseInt(custNo.getText());
-                    Account account = Bank.getCustomer(custNum).getAccount(0);
-                    String account_type = "";
-                    if (account instanceof SavingsAccount) {
-                        account_type = "Savings Account";
-                    } else if (account instanceof CheckingAccount) {
-                        account_type = "Checking Account";
-                    } else {
-                        account_type = "Unknown Account Type";
+                    for(int acct_idx = 0; acct_idx < customer.getNumberOfAccounts(); ++acct_idx) {
+                        Account account = customer.getAccount(acct_idx);
+                        String account_type = "";
+                        if (account instanceof SavingsAccount) {
+                            account_type = "Savings Account";
+                        } else if (account instanceof CheckingAccount) {
+                            account_type = "Checking Account";
+                        } else {
+                            account_type = "Unknown Account Type";
+                        }
+
+                        System.out.println("    " + account_type + ": current balance is " + account.getBalance());
                     }
-                    details.setText("Owner Name: "+Bank.getCustomer(custNum).getFirstName()+ " " + Bank.getCustomer(custNum).getLastName()+" (id="+custNum+")\nAccount Type: '"+account_type+"'\nAccount Balance: $"+account.getBalance());
-                } catch (Exception e) {
-                    messageBox("Error", "You must provide a valid customer number!").show();
                 }
             }
-        });
-    }
